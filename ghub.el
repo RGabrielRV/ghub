@@ -5,7 +5,7 @@
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
 ;; Homepage: https://github.com/magit/ghub
 ;; Keywords: tools
-;; Package-Requires: ((emacs "24.4") (let-alist "1.0.5"))
+;; Package-Requires: ((emacs "24.4") (dash "2.14.1") (graphql "0") (let-alist "1.0.5") (treepy "0.1.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -70,7 +70,7 @@
 (defconst ghub-default-host "api.github.com"
   "The default host that is used if `ghub.host' is not set.")
 
-(defvar ghub-github-token-scopes '(repo)
+(defvar ghub-github-token-scopes '(repo user)
   "The Github API scopes that your private tools need.
 
 The token that is created based on the value of this variable
@@ -84,6 +84,8 @@ behalf of some private tool.
 By default the only requested scope is `repo' because that is
 sufficient as well as required for most common uses.  This and
 other scopes are documented at URL `https://magit.vc/goto/2e586d36'.
+
+TODO mention `user'
 
 If your private tools need other scopes, then you have to add
 them here *before* creating the token.  Alternatively you can
