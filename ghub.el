@@ -643,12 +643,12 @@ and call `auth-source-forget+'."
     (setq username (ghub--username host)))
   (if (eq auth 'basic)
       (cl-ecase forge
-        ((nil github gitea gogs)
+        ((nil github gitea gogs bitbucket)
          (cons "Authorization" (ghub--basic-auth host username)))
         (gitlab
          (error "Gitlab does not support basic authentication")))
     (cons (cl-ecase forge
-            ((nil github gitea gogs)
+            ((nil github gitea gogs bitbucket)
              "Authorization")
             (gitlab
              "Private-Token"))
@@ -707,7 +707,7 @@ and call `auth-source-forget+'."
                      (cl-ecase forge
                        ((nil github)
                         (ghub--confirm-create-token host username package))
-                       ((gitlab gitea gogs)
+                       ((gitlab gitea gogs bitbucket)
                         (let ((str (capitalize (symbol-name forge))))
                           (error "Required %s token does not exist.  \
 See https://magit.vc/manual/ghub/%s-Support.html for instructions."
@@ -728,15 +728,20 @@ See https://magit.vc/manual/ghub/%s-Support.html for instructions."
     (gogs
      (or (ignore-errors (car (process-lines "git" "config" "gogs.host")))
          (bound-and-true-p gogs-default-host)))
-    ))
+    (bitbucket
+     (or (ignore-errors (car (process-lines "git" "config" "bitbucket.host")))
+         (bound-and-true-p buck-default-host)))))
 
 (defun ghub--username (host &optional forge)
   (let ((var (cond ((equal host ghub-default-host)
                     "github.user")
                    ((equal host (bound-and-true-p glab-default-host))
                     "gitlab.user")
+                   ((equal host (bound-and-true-p buck-default-host))
+                    "bitbucket.user")
                    ((eq forge 'github)    (format "github.%s.user"    host))
                    ((eq forge 'gitlab)    (format "gitlab.%s.user"    host))
+                   ((eq forge 'bitbucket) (format "bitbucket.%s.user" host))
                    ((eq forge 'gitea)     (format "gitea.%s.user"     host))
                    ((eq forge 'gogs)      (format "gogs.%s.user"      host)))))
     (condition-case nil
